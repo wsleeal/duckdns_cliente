@@ -91,16 +91,15 @@ if __name__ == "__main__":  # pragma: no cover
 
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
         path = Path(sys.executable).parent
-        make_conf = "make_conf.exe"
         print("running in a PyInstaller bundle")
     else:
         path = Path(__file__).parent
-        make_conf = "make_conf.py"
         print("running in a normal Python process")
 
     logger = Logger(file_path=path, name="DuckDNS")
     logger = logger.get_logger()
     if not os.path.isfile(Path(path, "config.json")):
+        make_conf = [n for n in path.glob("make_conf.*")][0]
         os.startfile(Path(path, make_conf))
         sys.exit()
     else:
