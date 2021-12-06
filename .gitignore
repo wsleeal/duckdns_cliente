@@ -2,7 +2,4 @@ output
 venv
 *.json
 *.pyc
-*.db
-*.sql
-.coverage
 *.log
