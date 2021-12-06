@@ -19,4 +19,4 @@ if __name__ == "__main__":  # pragma: no cover
         duck_conf["delay"] = int(input("Delay (em segundos): "))
         with open(Path(path, "config.json"), "w") as conf:
             json.dump(duck_conf, conf, indent=4)
-        os.startfile(Path(path, duck_conf))
+        os.startfile(Path(path, duck_ext))
