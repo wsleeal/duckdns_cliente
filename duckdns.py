@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import sys
 import time
 from datetime import datetime
 from pathlib import Path
@@ -87,16 +88,21 @@ class DuckDNS:
 
 
 if __name__ == "__main__":  # pragma: no cover
-    path = Path(__file__).parent
+
+    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+        path = Path(sys.executable).parent
+        make_conf = "make_conf.exe"
+        print("running in a PyInstaller bundle")
+    else:
+        path = Path(__file__).parent
+        make_conf = "make_conf.py"
+        print("running in a normal Python process")
+
     logger = Logger(file_path=path, name="DuckDNS")
     logger = logger.get_logger()
     if not os.path.isfile(Path(path, "config.json")):
-        duck_conf = {}
-        duck_conf["domain"] = domain = input("Domain: ")
-        duck_conf["token"] = token = input("Token: ")
-        duck_conf["delay"] = delay = int(input("Delay (em segundos): "))
-        with open(Path(path, "config.json"), "w") as conf:
-            json.dump(duck_conf, conf, indent=4)
+        os.startfile(Path(path, make_conf))
+        sys.exit()
     else:
         with open(Path(path, "config.json")) as f:
             data = json.load(f)
