@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="duckdns",
-    version="0.0.3",
+    version="0.0.4",
     url="https://github.com/wsleeal/duckdns_cliente",
     license="MIT",
     author="William Leal",
@@ -17,6 +17,7 @@ setup(
     install_requires=[
         "pytz==2021.3",
         "requests==2.26.0",
+        "pystray==0.19.1",
     ],
     python_requires=">=3.6",
     classifiers=[
