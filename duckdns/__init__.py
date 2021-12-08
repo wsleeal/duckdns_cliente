@@ -1,27 +1,29 @@
 # Import the required libraries
 import datetime
 import os
-import tkinter
 from pathlib import Path
-from tkinter import *
 from tkinter import messagebox
 
 import pystray
 from PIL import Image
-from pystray import MenuItem as item
 
-win = Tk()
+from main import DuckConfig, DuckDNS, Logger
+
+file_path = Path(__file__).parent
+logger = Logger(name="DuckDNS").get_logger()
+config = DuckConfig()
+ddns = DuckDNS(domain=config.domain, token=config.token, delay=config.delay, logger=logger)
+ddns.start()
 
 
 def quit_window(icon):
     icon.stop()
-    win.destroy()
+    ddns.stop()
 
 
 def open_log():
-    aqui = Path(__file__).parent
     hoje = datetime.datetime.now().strftime("%d-%m-%Y")
-    log_path = Path(Path(aqui), "logs", f"{hoje}.log")
+    log_path = Path(Path(file_path), "logs", f"{hoje}.log")
     if os.path.isfile(log_path):
         os.startfile(log_path)
     else:
@@ -29,11 +31,8 @@ def open_log():
 
 
 def show():
-    win.withdraw()
-    image = Image.open("favicon.ico")
-    menu = (item("Log", open_log), item("Quit", quit_window))
+    favicon = Path(file_path, "favicon.ico")
+    image = Image.open(favicon)
+    menu = (pystray.MenuItem("Log", open_log), pystray.MenuItem("Quit", quit_window))
     icon = pystray.Icon("name", image, "My System Tray Icon", menu)
     icon.run()
-
-
-show()

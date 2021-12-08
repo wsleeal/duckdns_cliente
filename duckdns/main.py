@@ -1,18 +1,18 @@
 import json
 import logging
 import os
-import sys
 import time
 from datetime import datetime
 from pathlib import Path
+from threading import Lock, Thread
 
 import requests
 from pytz import timezone
 
 
 class Logger:
-    def __init__(self, file_path: str, name: str) -> None:
-        self.file_path = file_path
+    def __init__(self, name: str) -> None:
+        self.file_path = Path(__file__).parent
         self.name = name
 
     def formater(self):
@@ -50,24 +50,39 @@ class Logger:
 
 
 class DuckDNS:
+
+    stoped = None
+    lock = None
+
     def __init__(self, domain: str, token: str, delay: int, logger=None) -> None:
         self.domain = domain
         self.token = token
         self.delay = delay
         self.logger = logger or logging.root
+        self.lock = Lock()
 
     @property
     def timestamp(self) -> float:
         return time.time()
+
+    def start(self):
+        self.stopped = False
+        t = Thread(target=self.run)
+        t.start()
+
+    def stop(self):
+        self.stopped = True
 
     def timestamp_to_hour(self, timestamp: float) -> str:
         hora = datetime.fromtimestamp(timestamp, tz=timezone("America/Sao_Paulo"))
         hora = hora.strftime("%H:%M:%S")
         return hora
 
-    def start(self, no_loop=False, api_url: str = None):
+    def run(self, no_loop=False, api_url: str = None):
         last_check = 0
         while True:
+            if no_loop or self.stoped:
+                break
             if (self.timestamp - last_check) > self.delay:
                 last_check = self.timestamp
 
@@ -83,34 +98,37 @@ class DuckDNS:
                     hora = self.timestamp_to_hour(last_check + self.delay)
                     self.logger.info(f"Resposta: {response.text}, Proxima Checagem: {hora}")
             time.sleep(0.1)
-            if no_loop:
-                break
 
 
-def run():
-    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
-        path = Path(sys.executable).parent
-        print("running in a PyInstaller bundle")
-    else:
-        path = Path(__file__).parent
-        print("running in a normal Python process")
+class DuckConfig:
+    def __init__(self) -> None:
 
-    logger = Logger(file_path=path, name="DuckDNS")
-    logger = logger.get_logger()
-    if not os.path.isfile(Path(path, "config.json")):
-        make_conf = [n for n in path.glob("make_conf.*")][0]
-        os.startfile(Path(path, make_conf))
-        sys.exit()
-    else:
-        with open(Path(path, "config.json")) as f:
-            data = json.load(f)
-            domain = data["domain"]
-            token = data["token"]
-            delay = data["delay"]
+        self.path = Path(__file__).parent
 
-    dynamic_dns = DuckDNS(domain=domain, token=token, delay=delay, logger=logger)
-    dynamic_dns.start()
+        self.domain = self.get_config_var("domain")
+        self.token = self.get_config_var("token")
+        self.delay = self.get_config_var("delay")
+
+    def get_config_var(self, var: str):
+        if os.path.isfile(Path(self.path, "config.json")):
+            with open(Path(self.path, "config.json")) as f:
+                data: dict = json.load(f)
+                return data.get(var)
+        else:
+            duck_conf = {}
+            duck_conf["domain"] = self.domain = input("Domain: ")
+            duck_conf["token"] = self.token = input("Token: ")
+            duck_conf["delay"] = self.delay = int(input("Delay (em segundos): "))
+            with open(Path(self.path, "config.json"), "w") as conf:
+                json.dump(duck_conf, conf, indent=4)
 
 
-if __name__ == "__main__":  # pragma: no cover
-    run()
+logger = Logger(name="DuckDNS").get_logger()
+
+config = DuckConfig()
+ddns = DuckDNS(domain=config.domain, token=config.token, delay=config.delay, logger=logger)
+ddns.start()
+print(config.domain)
+print(config.token)
+print(config.delay)
+ddns.stop()
