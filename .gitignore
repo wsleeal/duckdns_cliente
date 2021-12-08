@@ -1,5 +1,7 @@
 output
 venv
+build
+*.egg-info
 *.json
 *.pyc
 *.log
