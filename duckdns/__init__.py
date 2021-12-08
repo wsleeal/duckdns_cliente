@@ -41,7 +41,7 @@ class SysTray:
         image = Image.open(favicon)
         menu = pystray.Menu(
             pystray.MenuItem("Config", self.open_config),
-            pystray.MenuItem("Log", self.open_log),
+            pystray.MenuItem("Log", self.open_log, default=True),
             pystray.MenuItem("Quit", self.quit_window),
         )
         icon = pystray.Icon("name", image, "DuckDNS", menu)
