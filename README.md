@@ -1,6 +1,7 @@
-"# DuckDNS_Cliente" 
+"# DuckDNS Client" 
 
-1. Instalar os requisitos
-2. Executar os script duckdns.py
-3. Preencher as informacoes como no site oficial do DuckDNS
-4. Para rodar em segundo plano crie um atalho com o pythonw.exe apontando para o scriptso  
+Install: 
+    pip install git+https://github.com/wsleeal/duckdns_cliente.git
+
+Usage:
+    make shotcut: python-m duckdns
