@@ -44,7 +44,3 @@ class SysTray:
 def show():
     systray = SysTray()
     systray.start()
-
-
-if __name__ == "__main__":
-    show()
