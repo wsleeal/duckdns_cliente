@@ -1,11 +1,11 @@
-# Import the required libraries
 import datetime
 import os
 from pathlib import Path
 from tkinter import messagebox
 
 import pystray
-from PIL import Image
+from PIL import Image, ImageTk
+from pystray import MenuItem as item
 
 from .main import DuckConfig, DuckDNS, Logger
 
@@ -19,8 +19,8 @@ class SysTray:
         self.ddns = DuckDNS(domain=config.domain, token=config.token, delay=config.delay, logger=logger)
 
     def quit_window(self, icon):
-        icon.stop()
         self.ddns.stop()
+        icon.stop()
 
     def open_log(self):
         hoje = datetime.datetime.now().strftime("%d-%m-%Y")
@@ -40,4 +40,5 @@ class SysTray:
 
 
 def show():
-    SysTray().start()
+    systray = SysTray()
+    systray.start()

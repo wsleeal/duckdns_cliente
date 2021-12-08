@@ -51,7 +51,7 @@ class Logger:
 
 class DuckDNS:
 
-    stoped = None
+    stopped = False
     lock = None
 
     def __init__(self, domain: str, token: str, delay: int, logger=None) -> None:
@@ -71,24 +71,23 @@ class DuckDNS:
         t.start()
 
     def stop(self):
+        self.lock.acquire()
         self.stopped = True
+        self.lock.release()
 
     def timestamp_to_hour(self, timestamp: float) -> str:
         hora = datetime.fromtimestamp(timestamp, tz=timezone("America/Sao_Paulo"))
         hora = hora.strftime("%H:%M:%S")
         return hora
 
-    def run(self, no_loop=False, api_url: str = None):
+    def run(self):
         last_check = 0
-        while True:
-            if no_loop or self.stoped:
-                break
+        while not self.stopped:
             if (self.timestamp - last_check) > self.delay:
                 last_check = self.timestamp
 
                 try:
                     url = "https://www.duckdns.org/update?domains={}&token={}&ip="
-                    url = url if api_url is None else api_url
                     response = requests.get(url.format(self.domain, self.token))
                 except:
                     self.logger.exception("Request Error")
