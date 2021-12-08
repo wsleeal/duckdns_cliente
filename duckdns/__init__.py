@@ -21,6 +21,13 @@ class SysTray:
         self.ddns.stop()
         icon.stop()
 
+    def open_config(self):
+        config_path = Path(Path(self.file_path), "config.json")
+        if os.path.isfile(config_path):
+            os.startfile(config_path)
+        else:
+            messagebox.showinfo("DuckDNS", "Config não encontrado !")
+
     def open_log(self):
         hoje = datetime.datetime.now().strftime("%d-%m-%Y")
         log_path = Path(Path(self.file_path), "logs", f"{hoje}.log")
@@ -33,6 +40,7 @@ class SysTray:
         favicon = Path(self.file_path, "favicon.ico")
         image = Image.open(favicon)
         menu = pystray.Menu(
+            pystray.MenuItem("Config", self.open_config),
             pystray.MenuItem("Log", self.open_log),
             pystray.MenuItem("Quit", self.quit_window),
         )

@@ -107,14 +107,23 @@ class DuckConfig:
         self.delay = self.get_config_var("delay")
 
     def get_config_var(self, var: str):
-        if os.path.isfile(Path(self.path, "config.json")):
-            with open(Path(self.path, "config.json")) as f:
+        config_path = Path(self.path, "config.json")
+        if os.path.isfile(config_path):
+            with open(config_path) as f:
                 data: dict = json.load(f)
-                return data.get(var)
+                try:
+                    return data.get(var)
+                except:
+                    os.remove(config_path)
+                    self.make_config()
         else:
-            duck_conf = {}
-            duck_conf["domain"] = self.domain = input("Domain: ")
-            duck_conf["token"] = self.token = input("Token: ")
-            duck_conf["delay"] = self.delay = int(input("Delay (em segundos): "))
-            with open(Path(self.path, "config.json"), "w") as conf:
-                json.dump(duck_conf, conf, indent=4)
+            self.make_config()
+
+    def make_config(self):
+        duck_conf = {}
+        duck_conf["domain"] = self.domain = input("Domain: ")
+        duck_conf["token"] = self.token = input("Token: ")
+        duck_conf["delay"] = self.delay = int(input("Delay (em segundos): "))
+        with open(Path(self.path, "config.json"), "w") as conf:
+            json.dump(duck_conf, conf, indent=4)
+        print("Execute novemente o programa !")
