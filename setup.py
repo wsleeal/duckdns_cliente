@@ -13,6 +13,7 @@ setup(
     keywords=["ddns"],
     packages=["duckdns"],
     include_package_data=True,
+    package_data={"": ["favicon.ico"]},
     install_requires=[
         "pytz==2021.3",
         "requests==2.26.0",
