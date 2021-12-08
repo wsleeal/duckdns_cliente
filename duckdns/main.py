@@ -11,9 +11,8 @@ from pytz import timezone
 
 
 class Logger:
-    def __init__(self, name: str) -> None:
-        self.file_path = Path(__file__).parent
-        self.name = name
+    def __init__(self, file_path: str) -> None:
+        self.file_path = file_path
 
     def formater(self):
         msg_formater = "%(asctime)s - %(levelname)s - %(message)s"
@@ -39,7 +38,6 @@ class Logger:
         return file_handler
 
     def get_logger(self, name: str = None):
-        name = self.name if name is None else name
         logger = logging.getLogger(name)
         stream_handler = self.stream_handler()
         logger.addHandler(stream_handler)

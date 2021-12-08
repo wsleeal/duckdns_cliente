@@ -4,8 +4,7 @@ from pathlib import Path
 from tkinter import messagebox
 
 import pystray
-from PIL import Image, ImageTk
-from pystray import MenuItem as item
+from PIL import Image
 
 from .main import DuckConfig, DuckDNS, Logger
 
@@ -14,7 +13,7 @@ class SysTray:
     def __init__(self) -> None:
 
         self.file_path = Path(__file__).parent
-        logger = Logger(name="DuckDNS").get_logger()
+        logger = Logger(self.file_path).get_logger("DuckDNS")
         config = DuckConfig()
         self.ddns = DuckDNS(domain=config.domain, token=config.token, delay=config.delay, logger=logger)
 
@@ -31,10 +30,13 @@ class SysTray:
             messagebox.showinfo("DuckDNS", "Log não encontrado !")
 
     def start(self):
-        favicon = Path(self.file_path, "favicon.ico")
+        favicon = Path(self.file_path, "assets", "favicon.ico")
         image = Image.open(favicon)
-        menu = (pystray.MenuItem("Log", self.open_log), pystray.MenuItem("Quit", self.quit_window))
-        icon = pystray.Icon("name", image, "My System Tray Icon", menu)
+        menu = pystray.Menu(
+            pystray.MenuItem("Log", self.open_log),
+            pystray.MenuItem("Quit", self.quit_window),
+        )
+        icon = pystray.Icon("name", image, "DuckDNS", menu)
         self.ddns.start()
         icon.run()
 
