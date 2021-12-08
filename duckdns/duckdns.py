@@ -87,8 +87,7 @@ class DuckDNS:
                 break
 
 
-if __name__ == "__main__":  # pragma: no cover
-
+def run():
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
         path = Path(sys.executable).parent
         print("running in a PyInstaller bundle")
@@ -111,3 +110,7 @@ if __name__ == "__main__":  # pragma: no cover
 
     dynamic_dns = DuckDNS(domain=domain, token=token, delay=delay, logger=logger)
     dynamic_dns.start()
+
+
+if __name__ == "__main__":  # pragma: no cover
+    run()
