@@ -1,8 +1,8 @@
-from setuptools import find_packages, setup
+from setuptools import setup
 
 setup(
     name="duckdns",
-    version="0.0.2",
+    version="0.0.3",
     url="https://github.com/wsleeal/duckdns_cliente",
     license="MIT",
     author="William Leal",
@@ -11,9 +11,9 @@ setup(
     long_description="".join(open("README.md", encoding="utf-8").readlines()),
     long_description_content_type="text/markdown",
     keywords=["ddns"],
-    packages=find_packages("duckdns"),
-    package_dir={"": "duckdns"},
+    packages=["duckdns"],
     include_package_data=True,
+    package_data={"": ["favicon.ico"]},
     install_requires=[
         "pytz==2021.3",
         "requests==2.26.0",
