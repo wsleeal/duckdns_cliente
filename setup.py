@@ -32,7 +32,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "duckdns=duckdns.duckdns:run",
+            "duckdns=duckdns:show",
         ],
     },
 )
