@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 
 setup(
     name="duckdns",
@@ -11,9 +11,9 @@ setup(
     long_description="".join(open("README.md", encoding="utf-8").readlines()),
     long_description_content_type="text/markdown",
     keywords=["ddns"],
-    packages=["duckdns"],
+    packages=find_packages("duckdns"),
+    package_dir={"": "duckdns"},
     include_package_data=True,
-    package_data={"": ["favicon.ico"]},
     install_requires=[
         "pytz==2021.3",
         "requests==2.26.0",
