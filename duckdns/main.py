@@ -121,14 +121,3 @@ class DuckConfig:
             duck_conf["delay"] = self.delay = int(input("Delay (em segundos): "))
             with open(Path(self.path, "config.json"), "w") as conf:
                 json.dump(duck_conf, conf, indent=4)
-
-
-logger = Logger(name="DuckDNS").get_logger()
-
-config = DuckConfig()
-ddns = DuckDNS(domain=config.domain, token=config.token, delay=config.delay, logger=logger)
-ddns.start()
-print(config.domain)
-print(config.token)
-print(config.delay)
-ddns.stop()
