@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="duckdns",
-    version="0.0.1",
+    version="0.0.2",
     url="https://github.com/wsleeal/duckdns_cliente",
     license="MIT",
     author="William Leal",
