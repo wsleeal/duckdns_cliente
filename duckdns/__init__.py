@@ -30,7 +30,7 @@ class SysTray:
             messagebox.showinfo("DuckDNS", "Log não encontrado !")
 
     def start(self):
-        favicon = Path(self.file_path, "assets", "favicon.ico")
+        favicon = Path(self.file_path, "favicon.ico")
         image = Image.open(favicon)
         menu = pystray.Menu(
             pystray.MenuItem("Log", self.open_log),
