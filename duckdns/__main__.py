@@ -1,4 +1,4 @@
-from main import SysTray
+from .main import SysTray
 
 systray = SysTray()
 systray.start()
