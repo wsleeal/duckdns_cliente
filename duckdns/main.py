@@ -62,10 +62,6 @@ class DuckDNS:
         self.logger = logger or logging.root
         self.lock = Lock()
 
-    @property
-    def timestamp(self) -> float:
-        return time.time()
-
     def start(self):
         self.stopped = False
         t = Thread(target=self.run)
@@ -84,19 +80,17 @@ class DuckDNS:
     def run(self):
         last_check = 0
         while not self.stopped:
-            if (self.timestamp - last_check) > self.delay:
-                last_check = self.timestamp
-
+            if (time.time() - last_check) > self.delay:
                 try:
                     url = "https://www.duckdns.org/update?domains={}&token={}&ip="
                     response = requests.get(url.format(self.domain, self.token))
+                    if response.status_code == 200:
+                        hora = self.timestamp_to_hour(last_check + self.delay)
+                        self.logger.info(f"Resposta: {response.text}, Proxima Checagem: {hora}")
                 except:
                     self.logger.exception("Request Error")
                     time.sleep(self.delay)
-
-                if response.status_code == 200:
-                    hora = self.timestamp_to_hour(last_check + self.delay)
-                    self.logger.info(f"Resposta: {response.text}, Proxima Checagem: {hora}")
+                last_check = time.time()
             time.sleep(0.1)
 
 
