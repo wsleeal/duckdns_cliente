@@ -3,7 +3,6 @@ import json
 import logging
 import os
 import time
-from datetime import datetime
 from pathlib import Path
 from threading import Lock, Thread
 from tkinter import messagebox
@@ -34,7 +33,7 @@ class Logger:
         log_path = Path(Path(self.file_path), "logs")
         if not os.path.isdir(log_path):
             os.makedirs(log_path)
-        hoje = datetime.now().strftime("%d-%m-%Y")
+        hoje = datetime.datetime.now().strftime("%d-%m-%Y")
         log_file = Path(log_path, f"{hoje}.log")
         file_handler = logging.FileHandler(log_file)
         formater = self.formater()
@@ -78,7 +77,7 @@ class DuckDNS:
         self.lock.release()
 
     def timestamp_to_hour(self, timestamp: float) -> str:
-        hora = datetime.fromtimestamp(timestamp, tz=timezone("America/Sao_Paulo"))
+        hora = datetime.datetime.fromtimestamp(timestamp, tz=timezone("America/Sao_Paulo"))
         hora = hora.strftime("%H:%M:%S")
         return hora
 
