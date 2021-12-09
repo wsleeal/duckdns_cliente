@@ -17,6 +17,7 @@ class Broker:
         for eventlistener in self.eventlisteners:
             if topic == eventlistener.topic:
                 thread = Thread(target=eventlistener.update, args=(context,))
+                self.remove_eventlistener(eventlistener)
                 thread.start()
 
 
