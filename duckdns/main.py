@@ -112,13 +112,13 @@ class DuckConfig:
     def get_config_var(self, var: str):
         config_path = Path(self.path, "config.json")
         if os.path.isfile(config_path):
-            with open(config_path) as f:
-                data: dict = json.load(f)
-                try:
+            try:
+                with open(config_path) as f:
+                    data: dict = json.load(f)
                     return data.get(var)
-                except:
-                    os.remove(config_path)
-                    self.make_config()
+            except:
+                os.remove(config_path)
+                self.make_config()
         else:
             self.make_config()
 
