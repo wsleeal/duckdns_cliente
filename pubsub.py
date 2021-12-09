@@ -14,14 +14,10 @@ class Broker:
             self.eventlisteners.remove(eventlistener)
 
     def router(self, context, topic: str):
-        to_remove = set()
         for eventlistener in self.eventlisteners:
             if topic == eventlistener.topic:
                 thread = Thread(target=eventlistener.update, args=(context,))
                 thread.start()
-                to_remove.add(eventlistener)
-
-        return set(map(lambda n: self.eventlisteners.remove(n), to_remove))
 
 
 class Event:
@@ -49,14 +45,4 @@ if __name__ == "__main__":
     EventListener(broker=broker, topic="musica", callback=print)
 
     msg = Event(broker=broker)
-    msg.notify("Do Re Mi", topic="musica")
-    msg.notify("Do Re Mi", topic="musica")
-    msg.notify("Do Re Mi", topic="musica")
-    msg.notify("Do Re Mi", topic="musica")
-    msg.notify("Do Re Mi", topic="musica")
-    msg.notify("Do Re Mi", topic="musica")
-    msg.notify("Do Re Mi", topic="musica")
-
-    print()
-    EventListener(broker=broker, topic="musica", callback=print)
     msg.notify("Do Re Mi", topic="musica")
