@@ -129,7 +129,6 @@ class DuckConfig:
         duck_conf["delay"] = self.delay = int(input("Delay (em segundos): "))
         with open(Path(self.path, "config.json"), "w") as conf:
             json.dump(duck_conf, conf, indent=4)
-        print("Execute novemente o programa !")
 
 
 class SysTray:
