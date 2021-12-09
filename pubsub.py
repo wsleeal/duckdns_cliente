@@ -21,8 +21,9 @@ class Broker:
 
 
 class Event:
-    def __init__(self, broker: Broker) -> None:
+    def __init__(self, broker: Broker, topic: str, context) -> None:
         self.broker = broker
+        self.notify(context, topic)
 
     def notify(self, context, topic: str):
         self.broker.router(context, topic)
@@ -44,5 +45,4 @@ if __name__ == "__main__":
 
     EventListener(broker=broker, topic="musica", callback=print)
 
-    msg = Event(broker=broker)
-    msg.notify("Do Re Mi", topic="musica")
+    Event(broker=broker, topic="musica", context="Do Re Mi")
