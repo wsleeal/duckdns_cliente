@@ -1,4 +1,4 @@
-from . import show
+from main import SysTray
 
-if __name__ == "__main__":
-    show()
+systray = SysTray()
+systray.start()
