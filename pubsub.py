@@ -39,10 +39,39 @@ class EventListener:
         self.callback(context)
 
 
+def event(topic: str):
+    def inner(func):
+        def wrapper(*args, **kwargs):
+            context = func(*args, **kwargs)
+            _globals = globals()
+            broker_find = 0
+            for broker in _globals:
+                if isinstance(_globals[broker], Broker):
+                    Event(_globals[broker], topic, context)
+                    broker_find += 1
+                else:
+                    continue
+
+            if broker_find == 0:
+                raise ValueError("No Broker on Globals")
+            else:
+                return context
+
+        return wrapper
+
+    return inner
+
+
 if __name__ == "__main__":
 
     broker = Broker()
 
     EventListener(broker=broker, topic="musica", callback=print)
 
-    Event(broker=broker, topic="musica", context="Do Re Mi")
+    @event("musica")
+    def event_on_call_fuction():
+        return "Do Re Mi"
+
+    event_on_call_fuction()
+
+    Event(broker, "musica", "Do Re Mi")
