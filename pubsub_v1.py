@@ -1,26 +1,39 @@
-from typing import Callable, Dict, Set
+from abc import ABC, abstractmethod
+from threading import Thread
+from typing import Dict, Set
+
+
+class EventHandler(ABC):
+    @abstractmethod
+    def update(self):
+        raise ValueError("Not Implemented")
 
 
 class __Event:
     def __init__(self) -> None:
-        self.event_listeners: Dict[str, Set[Callable[[str], None]]] = dict()
+        self.event_listeners: Dict[str, Set[EventHandler]] = dict()
 
-    def add_handler(self, topic: str, callback: Callable[[str], None]):
+    def add_handler(self, topic: str, handler: EventHandler):
         if topic in self.event_listeners:
-            self.event_listeners[topic].add(callback)
+            self.event_listeners[topic].add(handler)
         else:
-            self.event_listeners[topic] = {callback}
+            self.event_listeners[topic] = {handler}
 
-    def notify(self, topic: str, context: str):
+    def notify(self, topic: str, context):
         if topic in self.event_listeners:
-            for callback in self.event_listeners[topic]:
-                callback(context)
+            for handler in self.event_listeners[topic]:
+                thread = Thread(target=handler.update, args=(context,))
+                thread.start()
 
 
-Event = __Event()
+event = __Event()
 
 if __name__ == "__main__":
 
-    Event.add_handler("msg1", print)
+    class TestHandler(EventHandler):
+        def update(self, msg):
+            print(msg)
 
-    Event.notify("msg1", "oi")
+    event.add_handler("msg1", TestHandler())
+
+    event.notify("msg1", "oi")
