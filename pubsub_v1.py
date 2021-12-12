@@ -5,7 +5,7 @@ class __Event:
     def __init__(self) -> None:
         self.event_listeners: Dict[str, Set[Callable[[str], None]]] = dict()
 
-    def add_listener(self, topic: str, callback: Callable[[str], None]):
+    def add_handler(self, topic: str, callback: Callable[[str], None]):
         if topic in self.event_listeners:
             self.event_listeners[topic].add(callback)
         else:
@@ -21,6 +21,6 @@ Event = __Event()
 
 if __name__ == "__main__":
 
-    Event.add_listener("msg1", print)
+    Event.add_handler("msg1", print)
 
     Event.notify("msg1", "oi")
