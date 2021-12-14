@@ -4,4 +4,11 @@ from redis import Redis
 
 conn = Redis()
 
-conn.publish("*", json.dumps({"topic": "Música", "context": "Do Re Mi11"}))
+msg = dict()
+msg["nome"] = "Leal"
+msg["sobrenome"] = "Leal"
+
+for n in range(500000000):
+
+    msg["count"] = n
+    conn.publish("teste", json.dumps(msg))
