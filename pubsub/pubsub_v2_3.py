@@ -1,9 +1,12 @@
+import threading
+
 from pubsub_v2_2 import EventListener, PubSub
 
 
 class TesteBroker(EventListener):
     def update(self, context):
-        print(context)
+        thread = threading.Thread(target=print, args=(context,))
+        thread.start()
 
 
 broker = PubSub()
