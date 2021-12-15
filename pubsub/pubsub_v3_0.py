@@ -10,10 +10,9 @@ import redis
 
 class Fila:
     def __init__(self, key_pattern: str) -> None:
-        """
-        Inicia operaçoes de fila atraves redis
-         Args:
-          key_pattern: prefixo das chaves
+        """Inicia operações de fila com redis
+        Args:
+            key_pattern (str): Prefixo das chaves
         """
         self.redis = redis.Redis(host="127.0.0.1", port=6379, db=0, decode_responses=True, retry_on_timeout=1)
         self.pattern = key_pattern
