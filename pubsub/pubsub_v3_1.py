@@ -10,8 +10,10 @@ fila = Fila("fila")
 
 
 for n in range(0, 1000):
-    context = dict()
-    context["1"] = fake.name()
-    context["2"] = fake.name()
 
-    fila.set(json.dumps({"topic": "nomes", "context": context}))
+    fila.set("nomes", (fake.name(), fake.name()))
+
+    # for key in fila.get_keys():
+    #     fila.delete(key)
+
+fila.redis.close()

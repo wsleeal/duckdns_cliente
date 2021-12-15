@@ -10,32 +10,37 @@ import redis
 
 class Fila:
     def __init__(self, pattern: str) -> None:
-        self.redis = redis.Redis(host="127.0.0.1", port=6379, db=0)
+        self.redis = redis.Redis(
+            host="127.0.0.1",
+            port=6379,
+            db=0,
+            decode_responses=True,
+            socket_timeout=360,
+            socket_connect_timeout=360,
+            retry_on_timeout=1,
+        )
         self.pattern = pattern
 
-    def get_keys(self):
+    def get_keys(self) -> list:
         # Get all keys from pattern
         return self.redis.keys(f"{self.pattern}:*")
 
-    def get(self, key: str):
+    def get(self, key: str) -> dict:
         # Get Value of key
         valor = self.redis.get(key)
-        return self._parse(valor)
+        return json.loads(valor)
 
-    def set(self, valor: str, ttl: int = None):
+    def set(self, topic: str, context, ttl: int = None):
         # Set value and ttl
         key = uuid.uuid4()
-        return self.redis.set(f"{self.pattern}:{str(key)}", valor, ttl)
+        data = dict()
+        data["topic"] = topic
+        data["context"] = context
+        return self.redis.set(f"{self.pattern}:{str(key)}", json.dumps(data), ttl)
 
     def delete(self, key: str):
         # Delete key
         return self.redis.delete(key)
-
-    def _parse(self, valor):
-        # parse value for utf-8
-        if isinstance(valor, bytes):
-            return bytes(valor).decode("utf-8")
-        return valor
 
 
 class EventListener(ABC):
@@ -70,17 +75,9 @@ class PubSub(Broker):
     def run_fila(self):
         for key in self.fila.get_keys():
             values = self.fila.get(key)
-            values = json.loads(values)
 
-            values_parsed = dict()
-            for k in values:
-                if isinstance(values[k], bytes):
-                    values_parsed[k] = bytes(values[k]).decode("utf-8")
-                else:
-                    values_parsed[k] = values[k]
-
-            topic = values_parsed["topic"] if "topic" in values_parsed else None
-            context = values_parsed["context"] if "context" in values_parsed else None
+            topic = values["topic"] if "topic" in values else None
+            context = values["context"] if "context" in values else None
 
             if self.notify(topic, context):
                 self.fila.delete(key)
