@@ -9,17 +9,14 @@ import redis
 
 
 class Fila:
-    def __init__(self, pattern: str) -> None:
-        self.redis = redis.Redis(
-            host="127.0.0.1",
-            port=6379,
-            db=0,
-            decode_responses=True,
-            socket_timeout=360,
-            socket_connect_timeout=360,
-            retry_on_timeout=1,
-        )
-        self.pattern = pattern
+    def __init__(self, key_pattern: str) -> None:
+        """
+        Inicia operaçoes de fila atraves redis
+         Args:
+          key_pattern: prefixo das chaves
+        """
+        self.redis = redis.Redis(host="127.0.0.1", port=6379, db=0, decode_responses=True, retry_on_timeout=1)
+        self.pattern = key_pattern
 
     def get_keys(self) -> list:
         # Get all keys from pattern
@@ -68,9 +65,9 @@ class Broker:
 
 
 class PubSub(Broker):
-    def __init__(self) -> None:
+    def __init__(self, key_pattern: str) -> None:
         super().__init__()
-        self.fila = Fila("fila")
+        self.fila = Fila(key_pattern)
 
     def run_fila(self):
         for key in self.fila.get_keys():
@@ -90,7 +87,7 @@ if __name__ == "__main__":
         def update(self, context):
             print(context)
 
-    pubsub = PubSub()
+    pubsub = PubSub(key_pattern="fila")
     pubsub.add_event_listener("nomes", ListenerTeste())
 
     while True:
